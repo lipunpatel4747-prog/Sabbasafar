@@ -19,11 +19,9 @@ public class MainActivity extends Activity {
         setContentView(startBtn);
 
         startBtn.setOnClickListener(v -> {
-            // Screen capture ki permission maango
             MediaProjectionManager mpm = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
             startActivityForResult(mpm.createScreenCaptureIntent(), REQUEST_CODE_SCREEN_CAPTURE);
             
-            // User ko bolo Accessibility on karne ke liye
             Toast.makeText(this, "Settings > Accessibility mein jaakar 'Subway AI Bot' ON karo", Toast.LENGTH_LONG).show();
         });
     }
@@ -31,11 +29,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_SCREEN_CAPTURE && resultCode == RESULT_OK) {
-            // Screen capture permission mil gayi
-            Toast.makeText(this, "Screen Capture ON! Ab game kholo.", Toast.LENGTH_SHORT).show();
+            // Screen capture ki permission mil gayi
+            Intent serviceIntent = new Intent(this, ScreenCaptureService.class);
+            serviceIntent.putExtra("resultCode", resultCode);
+            serviceIntent.putExtra("data", data);
+            startService(serviceIntent); // Service start karo
             
-            // Yahan hum baad mein screen dekhne ka service start karenge
-            // Abhi ke liye bas permission le liya hai
+            Toast.makeText(this, "Bot ON! Ab game kholo.", Toast.LENGTH_SHORT).show();
         }
     }
 }
